@@ -3,3 +3,5 @@
 Using Dash to create an interactive dashboard to view worldwide food production between 1985 and 2013.
 
 ![ScreenShot](/extras/ss_fao.png)
+
+Dash components used are a dropdown menu and a toggle scaler.
