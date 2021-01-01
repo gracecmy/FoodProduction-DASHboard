@@ -27,46 +27,42 @@ df=df.melt(id_vars=["Country","Item","latitude","longitude"],var_name="Year",val
 
 #the app
 app=dash.Dash()
-server=app.server
 
 app.layout=html.Div([
-    html.H1("How much food?",
-            style={"font-family":"Verdana","text-align":"center","height":"50px","padding-top":"40px"}),
-
-    html.Div("As the global population rises and food security becomes more pressing due to climate change, are we producing enough food to sustain us?",
-             style={"font-family":"Verdana","text-align":"center","width":"85%","margin-left":"auto","margin-right":"auto"}),
+    html.H1("Ever wonder where your food comes from beyond the supermarket?",
+            style={"font-family":"Geneva","font-size":"30px","text-align":"center","height":"50px","padding-top":"60px"}),
 
     html.Div("Select a year or a range of years to view food production during that period",
-             style={"font-family":"Verdana","font-size":"13px","font-style":"italic","text-align":"center","margin-top":"20px"}),   
+             style={"font-family":"Geneva","font-size":"17px","font-style":"italic","text-align":"center","margin-top":"20px"}),   
 
     html.Div([dcc.RangeSlider(id="year_slider",min=1961,max=2013,step=1,marks={1961:"1961",1974:"1974",1987:"1987",2000:"2000",2013:"2013"},value=[1985,2005])],
              style={"width":"70%","margin-left":"auto","margin-right":"auto","margin-top":"10px"}),
 
     html.Div(id="year_output",
-             style={"font-family":"Verdana","font-size":"15px","text-align":"center","margin-top":"10px"}),
+             style={"font-family":"Geneva","font-size":"20px","text-align":"center","margin-top":"10px"}),
 
     html.Div([dcc.Graph(id="map_figure",figure={})],
-             style={"margin-top":"15px","margin-left":"30px","margin-right":"30px"}),
+             style={"margin-top":"15px","margin-left":"30px","margin-right":"50px"}),
 
-    html.Div("Click a country on the map and select a food item from each dropdown",
-             style={"font-family":"Verdana","font-size":"13px","font-style":"italic","text-align":"center","margin-top":"20px"}),
+    html.Div("Click a country on the map above and select a food item from each dropdown below",
+             style={"font-family":"Geneva","font-size":"17px","font-style":"italic","text-align":"center","margin-top":"20px"}),
 
     html.Div(id="country_output",
-             style={"font-family":"Verdana","font-size":"15px","text-align":"center","margin-top":"10px","height":"20px"}),
+             style={"font-family":"Geneva","font-size":"20px","text-align":"center","margin-top":"15px","height":"20px"}),
 
     html.Div([dcc.Dropdown(id="first_item_dropdown",options=[{"label":i,"value":i} for i in df["Item"].unique()],value="Eggs"),
               dcc.Graph(id="item1_figure",figure={})],
-             style={"display":"inline-block","width":"30%","margin-left":"60px","margin-top":"10px","margin-bottom":"50px"}),
+             style={"display":"inline-block","width":"30%","margin-left":"60px","margin-top":"17px","margin-bottom":"50px"}),
 
     html.Div([dcc.Dropdown(id="second_item_dropdown",options=[{"label":i,"value":i} for i in df["Item"].unique()],value="Poultry Meat"),
               dcc.Graph(id="item2_figure",figure={})],
-             style={"display":"inline-block","width":"30%","margin-top":"10px","margin-bottom":"50px"}),
+             style={"display":"inline-block","width":"30%","margin-top":"17px","margin-bottom":"50px"}),
 
     html.Div([dcc.Dropdown(id="third_item_dropdown",options=[{"label":i,"value":i} for i in df["Item"].unique()],value="Wine"),
               dcc.Graph(id="item3_figure",figure={})],
-             style={"display":"inline-block","width":"30%","margin-top":"10px","margin-bottom":"50px"})
+             style={"display":"inline-block","width":"30%","margin-top":"17px","margin-bottom":"50px"})
 
-],style={"background-color":"lavenderblush"})
+],style={"background-color":"rgb(255,247,244"})
 
 
 @app.callback(
@@ -86,18 +82,22 @@ def update_map_figure(selected_years):
         df_allitems["Year"]=df_allitems["Year"].astype("int")
         df_allitems=df_allitems[(df_allitems["Year"]>=1985)&(df_allitems["Year"]<=2005)]
         df_allitems=df_allitems.groupby(["Country","latitude","longitude"],as_index=False)["Amount"].sum()
-        figure_map=px.scatter_geo(data_frame=df_allitems,scope="world",lat="latitude",lon="longitude",size="Amount",color="Amount",color_continuous_scale="pinkyl",size_max=40,hover_name="Country",labels={"Amount":"Amount Produced (1000 tonnes)"},hover_data={"latitude":False,"longitude":False})
+        figure_map=px.scatter_geo(data_frame=df_allitems,scope="world",lat="latitude",lon="longitude",size="Amount",color="Amount",color_continuous_scale="amp",size_max=40,hover_name="Country",labels={"Amount":"Amount Produced (1000 tonnes)"},hover_data={"latitude":False,"longitude":False})
         figure_map.update_layout(margin={"t":0,"r":0,"b":0,"l":0})
-        figure_map.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})  
+        figure_map.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"}) 
+        figure_map.update_layout(font_family="Geneva")
+        figure_map.update_layout(coloraxis_colorbar=dict(xanchor="left",x=1))
         return figure_map
     else:
         df_allitems=df.groupby(["Country","latitude","longitude","Year"],as_index=False)["Amount"].sum()
         df_allitems["Year"]=df_allitems["Year"].astype("int")
         df_allitems=df_allitems[(df_allitems["Year"]>=selected_years[0])&(df_allitems["Year"]<=selected_years[1])]
         df_allitems=df_allitems.groupby(["Country","latitude","longitude"],as_index=False)["Amount"].sum()
-        figure_map=px.scatter_geo(data_frame=df_allitems,scope="world",lat="latitude",lon="longitude",size="Amount",color="Amount",color_continuous_scale="pinkyl",size_max=40,hover_name="Country",labels={"Amount":"Amount Produced (1000 tonnes)"},hover_data={"latitude":False,"longitude":False})
+        figure_map=px.scatter_geo(data_frame=df_allitems,scope="world",lat="latitude",lon="longitude",size="Amount",color="Amount",color_continuous_scale="amp",size_max=40,hover_name="Country",labels={"Amount":"Amount Produced (1000 tonnes)"},hover_data={"latitude":False,"longitude":False})
         figure_map.update_layout(margin={"t":0,"r":0,"b":0,"l":0})
         figure_map.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_map.update_layout(font_family="Geneva")
+        figure_map.update_layout(coloraxis_colorbar=dict(xanchor="left",x=1))
         return figure_map
 
 
@@ -124,11 +124,13 @@ def update_item1_figure(selected_years,selected_item,clickData):
         df_items["Year"]=df_items["Year"].astype("int")
         df_items=df_items[(df_items["Year"]>=selected_years[0])&(df_items["Year"]<=selected_years[1])]
         df_items=df_items[df_items["Item"]==selected_item]
-        df_items.groupby(["Year"],as_index=False)["Amount"].sum()
-        figure_item1=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["lightskyblue"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        df_items=df_items.groupby(["Year"],as_index=False)["Amount"].sum()
+        figure_item1=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item1.update_xaxes(tick0=1961,dtick=1)
         figure_item1.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item1.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item1.update_layout(font_family="Geneva")
+        figure_item1.update_layout(coloraxis_showscale=False)
         return figure_item1      
     else:
         df_items=df.groupby(["Country","Item","latitude","longitude","Year"],as_index=False)["Amount"].sum()
@@ -137,10 +139,12 @@ def update_item1_figure(selected_years,selected_item,clickData):
         df_items=df_items[df_items["Item"]==selected_item]
         country_name=clickData["points"][0]["hovertext"]
         df_items=df_items[df_items["Country"]==country_name]
-        figure_item1=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["lightskyblue"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        figure_item1=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item1.update_xaxes(tick0=1961,dtick=1)
         figure_item1.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item1.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item1.update_layout(font_family="Geneva")
+        figure_item1.update_layout(coloraxis_showscale=False)
         return figure_item1
 
 
@@ -155,11 +159,13 @@ def update_item2_figure(selected_years,selected_item,clickData):
         df_items["Year"]=df_items["Year"].astype("int")
         df_items=df_items[(df_items["Year"]>=selected_years[0])&(df_items["Year"]<=selected_years[1])]
         df_items=df_items[df_items["Item"]==selected_item]
-        df_items.groupby(["Year"],as_index=False)["Amount"].sum()
-        figure_item2=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["turquoise"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        df_items=df_items.groupby(["Year"],as_index=False)["Amount"].sum()
+        figure_item2=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item2.update_xaxes(tick0=1961,dtick=1)
         figure_item2.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item2.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item2.update_layout(font_family="Geneva")
+        figure_item2.update_layout(coloraxis_showscale=False)
         return figure_item2 
     else:
         df_items=df.groupby(["Country","Item","latitude","longitude","Year"],as_index=False)["Amount"].sum()
@@ -168,10 +174,12 @@ def update_item2_figure(selected_years,selected_item,clickData):
         df_items=df_items[df_items["Item"]==selected_item]
         country_name=clickData["points"][0]["hovertext"]
         df_items=df_items[df_items["Country"]==country_name]
-        figure_item2=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["turquoise"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        figure_item2=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item2.update_xaxes(tick0=1961,dtick=1)
         figure_item2.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item2.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item2.update_layout(font_family="Geneva")
+        figure_item2.update_layout(coloraxis_showscale=False)
         return figure_item2
 
 
@@ -186,11 +194,13 @@ def update_item3_figure(selected_years,selected_item,clickData):
         df_items["Year"]=df_items["Year"].astype("int")
         df_items=df_items[(df_items["Year"]>=selected_years[0])&(df_items["Year"]<=selected_years[1])]
         df_items=df_items[df_items["Item"]==selected_item]
-        df_items.groupby(["Year"],as_index=False)["Amount"].sum()
-        figure_item3=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["aquamarine"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        df_items=df_items.groupby(["Year"],as_index=False)["Amount"].sum()
+        figure_item3=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item3.update_xaxes(tick0=1961,dtick=1)
         figure_item3.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item3.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item3.update_layout(font_family="Geneva")
+        figure_item3.update_layout(coloraxis_showscale=False)
         return figure_item3
     else:
         df_items=df.groupby(["Country","Item","latitude","longitude","Year"],as_index=False)["Amount"].sum()
@@ -199,12 +209,16 @@ def update_item3_figure(selected_years,selected_item,clickData):
         df_items=df_items[df_items["Item"]==selected_item]
         country_name=clickData["points"][0]["hovertext"]
         df_items=df_items[df_items["Country"]==country_name]
-        figure_item3=px.bar(data_frame=df_items,x="Year",y="Amount",color_discrete_sequence=["aquamarine"],labels={"Amount":"Amount Produced (1000 tonnes)"})
+        figure_item3=px.bar(data_frame=df_items,x="Year",y="Amount",color="Amount",color_continuous_scale=px.colors.sequential.amp,labels={"Amount":"Amount Produced (1000 tonnes)"})
         figure_item3.update_xaxes(tick0=1961,dtick=1)
         figure_item3.update_layout(margin={"t":25,"r":30,"b":60,"l":60})
         figure_item3.update_layout({"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)"})
+        figure_item3.update_layout(font_family="Geneva")
+        figure_item3.update_layout(coloraxis_showscale=False)
         return figure_item3
 
 
 if __name__=="__main__":
     app.run_server(debug=True)
+
+
