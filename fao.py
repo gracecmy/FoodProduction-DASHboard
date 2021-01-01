@@ -27,6 +27,7 @@ df=df.melt(id_vars=["Country","Item","latitude","longitude"],var_name="Year",val
 
 #the app
 app=dash.Dash()
+server=app.server
 
 app.layout=html.Div([
     html.H1("How much food?",
@@ -207,5 +208,3 @@ def update_item3_figure(selected_years,selected_item,clickData):
 
 if __name__=="__main__":
     app.run_server(debug=True)
-
-
