@@ -60,7 +60,10 @@ app.layout=html.Div([
 
     html.Div([dcc.Dropdown(id="third_item_dropdown",options=[{"label":i,"value":i} for i in df["Item"].unique()],value="Wine"),
               dcc.Graph(id="item3_figure",figure={})],
-             style={"display":"inline-block","width":"30%","margin-top":"17px","margin-bottom":"50px"})
+             style={"display":"inline-block","width":"30%","margin-top":"17px","margin-bottom":"50px"}),
+    
+    html.Div([html.A("view the code",href="https://github.com/gracecmy/FoodProduction-DASHboard/blob/main/fao.py",target="_blank")],
+             style={"font-family":"Geneva","font-size":"15px","text-align":"right"})
 
 ],style={"background-color":"rgb(255,247,244"})
 
